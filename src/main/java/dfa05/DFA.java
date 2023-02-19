@@ -12,7 +12,9 @@ Brandon White, spring 2023
  */
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JTextArea;
 
@@ -108,6 +110,11 @@ public class DFA implements Runnable {
         // Check the format of each line
         // Line 1: set of states
         String[] states = filteredLines.get(0).split(" ");
+        Set<String> stateSet = new HashSet<>(Arrays.asList(states));
+        if (stateSet.size() < states.length) {
+            textArea.append("//duplicate states in the state list\n");
+            return false;
+        }
         if (states.length < 1) {
             textArea.append("//invalid number of states\n");
             return false;
@@ -118,7 +125,6 @@ public class DFA implements Runnable {
                 return false;
             }
         }
-
         // Line 2: input alphabet
         String[] inputAlphabet = filteredLines.get(1).split(" ");
         if (inputAlphabet.length < 1) {
