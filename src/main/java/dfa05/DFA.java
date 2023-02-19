@@ -22,8 +22,8 @@ public class DFA implements Runnable {
     private int count;
     private int ms_to_sleep;
     private boolean pause;
-    private Thread thread;
-    private JTextArea textArea;
+    private final Thread thread;
+    private final JTextArea textArea;
 
     //pass a JTextArea in so that run() can manipulate the textArea
     DFA(JTextArea textArea) {
