@@ -37,9 +37,9 @@
                   <Component id="runButton" alignment="0" max="32767" attributes="0"/>
                   <Component id="resetButton" alignment="0" max="32767" attributes="0"/>
                   <Component id="speedSlider" alignment="0" max="32767" attributes="0"/>
-                  <Component id="speedLabel" min="-2" pref="80" max="-2" attributes="0"/>
                   <Component id="readDfaButton" alignment="0" max="32767" attributes="0"/>
                   <Component id="validateDfaButton" max="32767" attributes="0"/>
+                  <Component id="speedLabel" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
