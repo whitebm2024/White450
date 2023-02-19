@@ -49,7 +49,7 @@ public class MainFrame extends javax.swing.JFrame {
         validateDfaButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Brandon White");
+        setTitle("Brandon White - dfa05");
 
         textArea.setColumns(20);
         textArea.setRows(5);
