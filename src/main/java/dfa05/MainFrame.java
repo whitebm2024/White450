@@ -121,7 +121,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(fileTextField)
-                    .addComponent(fileComboBox, 0, 462, Short.MAX_VALUE)
+                    .addComponent(fileComboBox, 0, 562, Short.MAX_VALUE)
                     .addComponent(jScrollPane1))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -158,7 +158,7 @@ public class MainFrame extends javax.swing.JFrame {
                         .addComponent(speedLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(validateDfaButton)
-                        .addGap(0, 162, Short.MAX_VALUE)))
+                        .addGap(0, 262, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 

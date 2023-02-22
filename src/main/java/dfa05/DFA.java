@@ -190,50 +190,107 @@ public class DFA implements Runnable {
 
         // All checks passed
         textArea.append("//valid dfa\n");
-        isStringAccepted(filteredLines, "1");
+        textArea.append(simulateDFA(filteredLines, "01010101010101010"));
         return true;
     }
 
-    public void isStringAccepted(List<String> dfaDefinition, String inputString) {
-        String[] states = dfaDefinition.get(0).split(" ");
-        String[] inputSymbols = dfaDefinition.get(1).split(" ");
-        String startState = dfaDefinition.get(2);
-        String[] finalStates = dfaDefinition.get(3).split(" ");
-        String[][] deltaTable = new String[states.length][inputSymbols.length];
-        String[] deltaTableRow = dfaDefinition.get(4).split(" ");
-        int rowIndex = 0;
-        for (int i = 0; i < deltaTableRow.length; i += 2) {
-            deltaTable[rowIndex][0] = deltaTableRow[i];
-            deltaTable[rowIndex][1] = deltaTableRow[i + 1];
-            rowIndex++;
-        }
-
-        String output = "set of states: " + Arrays.toString(states).replaceAll("[\\[\\],]", "") + "\n"
-                + "set of input symbols: " + Arrays.toString(inputSymbols).replaceAll("[\\[\\],]", "") + "\n"
-                + "start state: " + startState + "\n"
-                + "set of final states: " + Arrays.toString(finalStates).replaceAll("[\\[\\],]", "") + "\n"
-                + "delta:\n"
-                + "      " + inputSymbols[0] + "   " + inputSymbols[1] + "\n"
-                + "    ---------\n";
-        for (int i = 0; i < deltaTable.length; i++) {
-            output += states[i] + " |   " + deltaTable[i][0] + "   " + deltaTable[i][1] + "\n";
-        }
-        output += "\ncurrentInputString '" + inputString + "'\n";
-        String currentState = startState;
-        for (int i = 0; i < inputString.length(); i++) {
-            char currentInputSymbol = inputString.charAt(i);
-            int columnIndex = Arrays.asList(inputSymbols).indexOf(String.valueOf(currentInputSymbol));
-            rowIndex = Arrays.asList(states).indexOf(currentState);
-            output += "    delta( " + currentState + ", " + currentInputSymbol + " ) = " + deltaTable[rowIndex][columnIndex] + "\n";
-            currentState = deltaTable[rowIndex][columnIndex];
-        }
-        output += inputString + " is ";
-        if (Arrays.asList(finalStates).contains(currentState)) {
-            output += "accepted";
-        } else {
-            output += "not accepted";
-        }
-        textArea.append(output);
-    }
+public static String simulateDFA(List<String> dfaDefinition, String inputString){
+	String[] states = dfaDefinition.get(0).split(" ");
+	String[] inputSymbols = dfaDefinition.get(1).split(" ");
+	String startState = dfaDefinition.get(2);
+	String[] finalStates = dfaDefinition.get(3).split(" ");
+	String[][] delta = new String[states.length][inputSymbols.length];
+	String[] transitions = dfaDefinition.get(4).split(" ");
+	
+	// Populate delta matrix
+	int transIndex = 0;
+	for (int i = 0; i < states.length; i++){
+		for (int j = 0; j < inputSymbols.length; j++){
+			delta[i][j] = transitions[transIndex];
+			transIndex++;
+		}
+	}
+	
+	// Check if input string is valid
+	boolean valid = true;
+	for (int i = 0; i < inputString.length(); i++){
+		boolean validSymbol = false;
+		for (int j = 0; j < inputSymbols.length; j++){
+			if (inputString.charAt(i) == inputSymbols[j].charAt(0)){
+				validSymbol = true;
+				break;
+			}
+		}
+		if (!validSymbol){
+			valid = false;
+			break;
+		}
+	}
+	if (!valid)
+		return "Input string is invalid.";
+	
+	// Check if input string is accepted by DFA
+	String currentState = startState;
+	String outputString = "set of states: ";
+	for (String s: states)
+		outputString += s + " ";
+	outputString += "\nset of input symbols: ";
+	for (String s: inputSymbols)
+		outputString += s + " ";
+	outputString += "\nstart state: " + startState + "\nset of final states: ";
+	for (String s: finalStates)
+		outputString += s + " ";
+	outputString += "\ndelta:\n";
+	
+	// Print delta
+	for (int i = 0; i < inputSymbols.length; i++){
+		outputString += "    " + inputSymbols[i]+ " ";
+	}
+	outputString += "\n  -----------\n";
+	for (int i = 0; i < states.length; i++){
+		outputString += states[i] + " | ";
+		for (int j = 0; j < inputSymbols.length; j++){
+			outputString += delta[i][j] + "   ";
+		}
+		outputString += "\n";
+	}
+	
+	outputString += "currentInputString '" + inputString + "'\n";
+	for (int i = 0; i < inputString.length(); i++){
+		String symbol = inputString.substring(i, i+1);
+		int stateIndex = -1;
+		for (int j = 0; j < states.length; j++){
+			if (states[j].equals(currentState)){
+				stateIndex = j;
+				break;
+			}
+		}
+		int symbolIndex = -1;
+		for (int j = 0; j < inputSymbols.length; j++){
+			if (inputSymbols[j].equals(symbol)){
+				symbolIndex = j;
+				break;
+			}
+		}
+		if (stateIndex == -1 || symbolIndex == -1)
+			return "Input string is not accepted by DFA";
+		outputString += "    delta( " + currentState + ", " + symbol + " ) = " + delta[stateIndex][symbolIndex] + "\n";
+		currentState = delta[stateIndex][symbolIndex];
+	}
+	
+	boolean accepted = false;
+	for (String s : finalStates){
+		if (currentState.equals(s))
+			accepted = true;
+	}
+	
+	if (accepted)
+		outputString += inputString + " is accepted";
+	else
+		outputString += inputString + " is not accepted";
+	
+        System.out.println(outputString);
+	return outputString;
+}
 
 }
