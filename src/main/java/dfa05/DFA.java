@@ -12,8 +12,10 @@ Brandon White, spring 2023
  */
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JTextArea;
@@ -188,6 +190,50 @@ public class DFA implements Runnable {
 
         // All checks passed
         textArea.append("//valid dfa\n");
+        isStringAccepted(filteredLines, "1");
         return true;
     }
+
+    public void isStringAccepted(List<String> dfaDefinition, String inputString) {
+        String[] states = dfaDefinition.get(0).split(" ");
+        String[] inputSymbols = dfaDefinition.get(1).split(" ");
+        String startState = dfaDefinition.get(2);
+        String[] finalStates = dfaDefinition.get(3).split(" ");
+        String[][] deltaTable = new String[states.length][inputSymbols.length];
+        String[] deltaTableRow = dfaDefinition.get(4).split(" ");
+        int rowIndex = 0;
+        for (int i = 0; i < deltaTableRow.length; i += 2) {
+            deltaTable[rowIndex][0] = deltaTableRow[i];
+            deltaTable[rowIndex][1] = deltaTableRow[i + 1];
+            rowIndex++;
+        }
+
+        String output = "set of states: " + Arrays.toString(states).replaceAll("[\\[\\],]", "") + "\n"
+                + "set of input symbols: " + Arrays.toString(inputSymbols).replaceAll("[\\[\\],]", "") + "\n"
+                + "start state: " + startState + "\n"
+                + "set of final states: " + Arrays.toString(finalStates).replaceAll("[\\[\\],]", "") + "\n"
+                + "delta:\n"
+                + "      " + inputSymbols[0] + "   " + inputSymbols[1] + "\n"
+                + "    ---------\n";
+        for (int i = 0; i < deltaTable.length; i++) {
+            output += states[i] + " |   " + deltaTable[i][0] + "   " + deltaTable[i][1] + "\n";
+        }
+        output += "\ncurrentInputString '" + inputString + "'\n";
+        String currentState = startState;
+        for (int i = 0; i < inputString.length(); i++) {
+            char currentInputSymbol = inputString.charAt(i);
+            int columnIndex = Arrays.asList(inputSymbols).indexOf(String.valueOf(currentInputSymbol));
+            rowIndex = Arrays.asList(states).indexOf(currentState);
+            output += "    delta( " + currentState + ", " + currentInputSymbol + " ) = " + deltaTable[rowIndex][columnIndex] + "\n";
+            currentState = deltaTable[rowIndex][columnIndex];
+        }
+        output += inputString + " is ";
+        if (Arrays.asList(finalStates).contains(currentState)) {
+            output += "accepted";
+        } else {
+            output += "not accepted";
+        }
+        textArea.append(output);
+    }
+
 }
