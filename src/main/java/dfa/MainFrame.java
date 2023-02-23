@@ -259,10 +259,10 @@ public class MainFrame extends javax.swing.JFrame {
         try{
             In in = new In(path);
             String s = in.readAll();
-            outputArea.setText(s + '\n');
+            dfaArea.setText(s + '\n');
         }
         catch(IllegalArgumentException e){
-            outputArea.setText(e.getLocalizedMessage()+'\n');
+            dfaArea.setText(e.getLocalizedMessage()+'\n');
         }
     }//GEN-LAST:event_readDfaButtonActionPerformed
 
@@ -271,8 +271,8 @@ public class MainFrame extends javax.swing.JFrame {
         if (!dfa.getPause()) {
             runButtonActionPerformed(evt);
         }
-        dfa.validateDfa(outputArea.getText());
-       // dfa.simulateDfa
+        dfa.validateDfa(dfaArea.getText());
+       
     }//GEN-LAST:event_validateDfaButtonActionPerformed
 
     /**

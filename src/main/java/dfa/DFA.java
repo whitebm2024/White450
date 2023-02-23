@@ -189,7 +189,7 @@ public class DFA implements Runnable {
                 return false;
             }
         }
-
+        //todo return string instead of outputarea.append() 'ing
         // All checks passed
         outputArea.append("//valid dfa\n");
         outputArea.append(simulateDFA(filteredLines, inputArea.getText()));
