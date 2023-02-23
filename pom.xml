@@ -20,7 +20,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>dfa05.MainFrame</mainClass>
+                            <mainClass>dfa.MainFrame</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
