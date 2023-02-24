@@ -29,6 +29,7 @@ public class DFA implements Runnable {
     private final Thread thread;
     private final JTextArea outputArea;
     private final JTextArea inputArea;
+    private StringBuilder output;
 
     //pass a JTextArea in so that run() can manipulate the outputTextArea
     DFA(JTextArea outputTextArea, JTextArea inputTextArea) {
@@ -40,6 +41,7 @@ public class DFA implements Runnable {
         thread.start();
         this.outputArea = outputTextArea;
         this.inputArea = inputTextArea;
+        this.output = new StringBuilder();
     }
 
     public void reset() {
@@ -92,10 +94,15 @@ public class DFA implements Runnable {
     public int getSleep() {
         return ms_to_sleep;
     }
+    public String getOutput(){
+        return output.toString();
+    }
 
-    public boolean validateDfa(String input) {
+    public Boolean validateDfa(String input) {
         String[] lines = input.split("\\r?\\n");
         List<String> filteredLines = new ArrayList<>();
+        // Reset the output
+        output.setLength(0);
 
         // Filter out comment lines and remove superfluous whitespace
         for (String line : lines) {
@@ -107,7 +114,7 @@ public class DFA implements Runnable {
 
         // Check the number of lines
         if (filteredLines.size() != 5) {
-            outputArea.append("//invalid number of non comment lines (must be 5)\n");
+            output.append("//invalid number of non comment lines (must be 5)\n");
             return false;
         }
 
@@ -116,28 +123,27 @@ public class DFA implements Runnable {
         String[] states = filteredLines.get(0).split(" ");
         Set<String> stateSet = new HashSet<>(Arrays.asList(states));
         if (stateSet.size() < states.length) {
-            outputArea.append("//duplicate states in the state list\n");
+            output.append("//duplicate states in the state list\n");
             return false;
         }
         if (states.length < 1) {
-            outputArea.append("//invalid number of states\n");
+            output.append("//invalid number of states\n");
             return false;
         }
         for (String state : states) {
             if (!state.matches("^[a-zA-Z]\\w{0,9}$")) {
-                outputArea.append("//invalid state name '" + state + "'\n");
-                return false;
+                output.append("//invalid state name '").append(state).append("'\n");
             }
         }
         // Line 2: input alphabet
         String[] inputAlphabet = filteredLines.get(1).split(" ");
         if (inputAlphabet.length < 1) {
-            outputArea.append("//invalid number of input symbols\n");
+            output.append("//invalid number of input symbols\n");
             return false;
         }
         for (String symbol : inputAlphabet) {
             if (!symbol.matches("^\\w$")) {
-                outputArea.append("//invalid input symbol '" + symbol + "'\n");
+                output.append("//invalid input symbol '").append(symbol).append("'\n");
                 return false;
             }
         }
@@ -145,27 +151,26 @@ public class DFA implements Runnable {
         // Line 3: initial state
         String initialState = filteredLines.get(2);
         if (!initialState.matches("^[a-zA-Z]\\w{0,9}$")) {
-            outputArea.append("//invalid initial state name '" + initialState + "'\n");
+            output.append("//invalid initial state name '").append(initialState).append("'\n");
             return false;
         }
         if (!Arrays.asList(states).contains(initialState)) {
-            outputArea.append("//start state not in state list -- '" + initialState + "'\n");
-            return false;
+            output.append("//start state not in state list -- '").append(initialState).append("'\n");
         }
 
         // Line 4: set of favorable states
         String[] favorableStates = filteredLines.get(3).split(" ");
         if (favorableStates.length < 1) {
-            outputArea.append("//invalid number of favorable states\n");
+            output.append("//invalid number of favorable states\n");
             return false;
         }
         for (String state : favorableStates) {
             if (!state.matches("^[a-zA-Z]\\w{0,9}$")) {
-                outputArea.append("//invalid favorable state name '" + state + "'\n");
+                output.append("//invalid favorable state name '").append(state).append("'\n");
                 return false;
             }
             if (!Arrays.asList(states).contains(state)) {
-                outputArea.append("//favorable state not in state list -- '" + state + "'\n");
+                output.append("//favorable state not in state list -- '").append(state).append("'\n");
                 return false;
             }
         }
@@ -173,7 +178,7 @@ public class DFA implements Runnable {
         // Line 5: transition table
         String[] table = filteredLines.get(4).split(" ");
         if (table.length != states.length * inputAlphabet.length) {
-            outputArea.append("//invalid number of transitions\n");
+            output.append("//invalid number of transitions\n");
             return false;
         }
         for (int i = 0; i < table.length; i++) {
@@ -181,22 +186,22 @@ public class DFA implements Runnable {
             String symbol = inputAlphabet[i % inputAlphabet.length];
             String nextState = table[i];
             if (!nextState.matches("^[a-zA-Z]\\w{0,9}$")) {
-                outputArea.append("//invalid next state name '" + nextState + "'\n");
+                output.append("//invalid next state name '").append(nextState).append("'\n");
                 return false;
             }
             if (!Arrays.asList(states).contains(nextState)) {
-                outputArea.append("//next state not in state list -- '" + nextState + "'\n");
+                output.append("//next state not in state list -- '").append(nextState).append("'\n");
                 return false;
             }
         }
-        //todo return string instead of outputarea.append() 'ing
+
         // All checks passed
-        outputArea.append("//valid dfa\n");
-        outputArea.append(simulateDFA(filteredLines, inputArea.getText()));
+        output.append("//valid dfa\n");
+        output.append(simulateDFA(filteredLines, inputArea.getText()));
         return true;
     }
 
-    public static String simulateDFA(List<String> dfaDefinition, String inputString) {
+    public Boolean simulateDFA(List<String> dfaDefinition, String inputString) {
         String[] states = dfaDefinition.get(0).split(" ");
         String[] inputSymbols = dfaDefinition.get(1).split(" ");
         String startState = dfaDefinition.get(2);
@@ -229,39 +234,40 @@ public class DFA implements Runnable {
             }
         }
         if (!valid) {
-            return "Input string is invalid.";
+            output.append("Input string is invalid.\n");
+            return false;
         }
 
         // Check if input string is accepted by DFA
         String currentState = startState;
-        String outputString = "set of states: ";
+        output.append("set of states: ");
         for (String s : states) {
-            outputString += s + " ";
+            output.append(s).append(" ");
         }
-        outputString += "\nset of input symbols: ";
+        output.append("\nset of input symbols: ");
         for (String s : inputSymbols) {
-            outputString += s + " ";
+            output.append(s).append(" ");
         }
-        outputString += "\nstart state: " + startState + "\nset of final states: ";
+        output.append("\nstart state: ").append(startState).append("\nset of final states: ");
         for (String s : finalStates) {
-            outputString += s + " ";
+            output.append(s).append(" ");
         }
-        outputString += "\ndelta:\n";
+        output.append("\ndelta:\n");
 
         // Print delta
         for (String inputSymbol : inputSymbols) {
-            outputString += "    " + inputSymbol + " ";
+            output.append("    ").append(inputSymbol).append(" ");
         }
-        outputString += "\n  -----------\n";
+        output.append("\n  -----------\n");
         for (int i = 0; i < states.length; i++) {
-            outputString += states[i] + " | ";
+            output.append(states[i]).append(" | ");
             for (int j = 0; j < inputSymbols.length; j++) {
-                outputString += delta[i][j] + "   ";
+                output.append(delta[i][j]).append("   ");
             }
-            outputString += "\n";
+            output.append("\n");
         }
 
-        outputString += "currentInputString '" + inputString + "'\n";
+        output.append("currentInputString '").append(inputString).append("'\n");
         for (int i = 0; i < inputString.length(); i++) {
             String symbol = inputString.substring(i, i + 1);
             int stateIndex = -1;
@@ -279,9 +285,10 @@ public class DFA implements Runnable {
                 }
             }
             if (stateIndex == -1 || symbolIndex == -1) {
-                return "Input string is not accepted by DFA";
+                output.append("Input string is not accepted by DFA\n");
             }
-            outputString += "    delta( " + currentState + ", " + symbol + " ) = " + delta[stateIndex][symbolIndex] + "\n";
+            output.append("    delta( ").append(currentState).append(", ").append(symbol)
+                    .append(" ) = ").append(delta[stateIndex][symbolIndex]).append("\n");
             currentState = delta[stateIndex][symbolIndex];
         }
 
@@ -293,13 +300,13 @@ public class DFA implements Runnable {
         }
 
         if (accepted) {
-            outputString += inputString + " is accepted";
+            output.append(inputString).append(" is accepted");
         } else {
-            outputString += inputString + " is not accepted";
+            output.append(inputString).append(" is not accepted");
         }
 
-        System.out.println(outputString);
-        return outputString;
+        System.out.println(output.toString());
+        return true;
     }
 
 }
