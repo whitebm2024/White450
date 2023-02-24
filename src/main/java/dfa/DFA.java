@@ -97,7 +97,8 @@ public class DFA implements Runnable {
     public String getOutput(){
         return output.toString();
     }
-
+    //todo remove inputtextarea field and pass it in as an argument
+    //todo remove final boolean append(can't find where) or just make the method void
     public Boolean validateDfa(String input) {
         String[] lines = input.split("\\r?\\n");
         List<String> filteredLines = new ArrayList<>();
