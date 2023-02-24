@@ -98,7 +98,7 @@ public class DFA implements Runnable {
         return output.toString();
     }
     //todo remove inputtextarea field and pass it in as an argument
-    //todo remove final boolean append(can't find where) or just make the method void
+    //todo separate validation and simulation
     public Boolean validateDfa(String input) {
         String[] lines = input.split("\\r?\\n");
         List<String> filteredLines = new ArrayList<>();
@@ -198,7 +198,7 @@ public class DFA implements Runnable {
 
         // All checks passed
         output.append("//valid dfa\n");
-        output.append(simulateDFA(filteredLines, inputArea.getText()));
+        simulateDFA(filteredLines, inputArea.getText());
         return true;
     }
 
