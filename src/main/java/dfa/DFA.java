@@ -98,6 +98,8 @@ public class DFA implements Runnable {
         return output.toString();
     }
     //todo remove inputtextarea field and pass it in as an argument
+    //  don't remove inputtextarea, so that I can pass filteredlines to simulateDfa
+    //  unless i store the lines as part of the dfa class
     //todo separate validation and simulation
     public Boolean validateDfa(String input) {
         String[] lines = input.split("\\r?\\n");
