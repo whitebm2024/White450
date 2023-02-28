@@ -117,7 +117,7 @@ public class DFA implements Runnable {
 
         // Check the number of lines
         if (filteredLines.size() != 5) {
-            output.append("//invalid number of non comment lines (must be 5)\n");
+            output.append("invalid number of non comment lines (must be 5)\n");
             return false;
         }
 
@@ -126,27 +126,27 @@ public class DFA implements Runnable {
         String[] states = filteredLines.get(0).split(" ");
         Set<String> stateSet = new HashSet<>(Arrays.asList(states));
         if (stateSet.size() < states.length) {
-            output.append("//duplicate states in the state list\n");
+            output.append("duplicate states in the state list\n");
             return false;
         }
         if (states.length < 1) {
-            output.append("//invalid number of states\n");
+            output.append("invalid number of states\n");
             return false;
         }
         for (String state : states) {
             if (!state.matches("^[a-zA-Z]\\w{0,9}$")) {
-                output.append("//invalid state name '").append(state).append("'\n");
+                output.append("invalid state name '").append(state).append("'\n");
             }
         }
         // Line 2: input alphabet
         String[] inputAlphabet = filteredLines.get(1).split(" ");
         if (inputAlphabet.length < 1) {
-            output.append("//invalid number of input symbols\n");
+            output.append("invalid number of input symbols\n");
             return false;
         }
         for (String symbol : inputAlphabet) {
             if (!symbol.matches("^\\w$")) {
-                output.append("//invalid input symbol '").append(symbol).append("'\n");
+                output.append("invalid input symbol '").append(symbol).append("'\n");
                 return false;
             }
         }
@@ -154,26 +154,26 @@ public class DFA implements Runnable {
         // Line 3: initial state
         String initialState = filteredLines.get(2);
         if (!initialState.matches("^[a-zA-Z]\\w{0,9}$")) {
-            output.append("//invalid initial state name '").append(initialState).append("'\n");
+            output.append("invalid initial state name '").append(initialState).append("'\n");
             return false;
         }
         if (!Arrays.asList(states).contains(initialState)) {
-            output.append("//start state not in state list -- '").append(initialState).append("'\n");
+            output.append("start state not in state list -- '").append(initialState).append("'\n");
         }
 
         // Line 4: set of favorable states
         String[] favorableStates = filteredLines.get(3).split(" ");
         if (favorableStates.length < 1) {
-            output.append("//invalid number of favorable states\n");
+            output.append("invalid number of favorable states\n");
             return false;
         }
         for (String state : favorableStates) {
             if (!state.matches("^[a-zA-Z]\\w{0,9}$")) {
-                output.append("//invalid favorable state name '").append(state).append("'\n");
+                output.append("invalid favorable state name '").append(state).append("'\n");
                 return false;
             }
             if (!Arrays.asList(states).contains(state)) {
-                output.append("//favorable state not in state list -- '").append(state).append("'\n");
+                output.append("favorable state not in state list -- '").append(state).append("'\n");
                 return false;
             }
         }
@@ -181,7 +181,7 @@ public class DFA implements Runnable {
         // Line 5: transition table
         String[] table = filteredLines.get(4).split(" ");
         if (table.length != states.length * inputAlphabet.length) {
-            output.append("//invalid number of transitions\n");
+            output.append("invalid number of transitions\n");
             return false;
         }
         for (int i = 0; i < table.length; i++) {
@@ -189,17 +189,17 @@ public class DFA implements Runnable {
             String symbol = inputAlphabet[i % inputAlphabet.length];
             String nextState = table[i];
             if (!nextState.matches("^[a-zA-Z]\\w{0,9}$")) {
-                output.append("//invalid next state name '").append(nextState).append("'\n");
+                output.append("invalid next state name '").append(nextState).append("'\n");
                 return false;
             }
             if (!Arrays.asList(states).contains(nextState)) {
-                output.append("//next state not in state list -- '").append(nextState).append("'\n");
+                output.append("next state not in state list -- '").append(nextState).append("'\n");
                 return false;
             }
         }
 
         // All checks passed
-        output.append("//valid dfa\n");
+        output.append("valid dfa\n");
         simulateDFA(filteredLines, inputArea.getText());
         return true;
     }

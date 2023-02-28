@@ -120,6 +120,11 @@ public class MainFrame extends javax.swing.JFrame {
 
         inputFileComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         inputFileComboBox.setPreferredSize(new java.awt.Dimension(300, 23));
+        inputFileComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inputFileComboBoxActionPerformed(evt);
+            }
+        });
 
         dfaArea.setColumns(20);
         dfaArea.setRows(5);
@@ -271,6 +276,10 @@ public class MainFrame extends javax.swing.JFrame {
         
        
     }//GEN-LAST:event_validateDfaButtonActionPerformed
+
+    private void inputFileComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputFileComboBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_inputFileComboBoxActionPerformed
 
     /**
      * @param args the command line arguments
