@@ -305,7 +305,7 @@ public class DFA implements Runnable {
         if (accepted) {
             output.append(inputString).append(" is accepted");
         } else {
-            output.append(inputString).append(" is not accepted");
+            output.append(inputString).append(" is not accepted\n");
         }
 
         System.out.println(output.toString());
