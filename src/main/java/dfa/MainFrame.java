@@ -53,7 +53,7 @@ public class MainFrame extends javax.swing.JFrame {
         inputArea = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Brandon White - dfa05");
+        setTitle("Brandon White - dfa06");
 
         outputArea.setColumns(20);
         outputArea.setRows(5);
